@@ -27,6 +27,7 @@ print("Folder name",folder_name)
 
 # Print the current working directory
 print("Current working directory:", path)
+
 # Get a list of all files and directories in the current working directory
 files = os.listdir(path)
 print("all files in this directory", files)
