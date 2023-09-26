@@ -6,6 +6,24 @@ import matplotlib.pyplot as plt
 #import csv
 import numpy as np
 plot = 0
+
+def plot_data(plot_df, txt_file):
+    # Get a list of column names excluding 'Time'
+    columns_to_plot = [col for col in plot_df.columns if col != 'Time']
+
+    # Create a single plot for all columns
+    plt.figure(figsize=(10, 6))  # You can adjust the figure size as needed
+    for column in columns_to_plot:
+        plt.plot(plot_df['Time'], plot_df[column], label=column)
+
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    plt.title(txt_file)
+    plt.legend()  # Add a legend to differentiate the columns
+    plt.grid(True)  # Add grid lines
+    plt.show()
+
+
 # Create the root Tkinter window
 root = tk.Tk()
 
@@ -86,17 +104,22 @@ for txt_file in txt_files:
     print(raw_df)
 
     if plot == 1:
-        # Get a list of column names excluding 'time'
-        columns_to_plot = [col for col in raw_df.columns if col != 'time']
+        plot_data(raw_df,txt_file)
 
-        # Create a single plot for all columns
-        plt.figure(figsize=(10, 6))  # You can adjust the figure size as needed
-        for column in columns_to_plot:
-            plt.plot(raw_df['Time'], raw_df[column], label=column)
+    # Create a new dataframe F0
+    Fo_df = pd.DataFrame()
 
-        plt.xlabel('Time')
-        plt.ylabel('Value')
-        plt.title(txt_file)
-        plt.legend()  # Add a legend to differentiate the columns
-        plt.grid(True)  # Add grid lines
-        plt.show()
+    # Iterate through every second row in raw_df
+    for i in range(0, len(raw_df), 2):
+        Fo_df = Fo_df._append(raw_df.iloc[i], ignore_index=True)
+
+    # Display the resulting F0 dataframe
+    print("F0 DataFrame:")
+    print(Fo_df)
+    for column in Fo_df:
+        Fo_df[column] = pd.to_numeric(Fo_df[column])
+    Fo_df['Time'] = Fo_df['Time'] - 0.001
+    print(Fo_df)
+
+    if plot == 1:
+        plot_data(Fo_df,txt_file)
