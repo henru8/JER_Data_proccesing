@@ -108,18 +108,41 @@ for txt_file in txt_files:
 
     # Create a new dataframe F0
     Fo_df = pd.DataFrame()
+    Measuring_Flash_df = pd.DataFrame()
+    Pre_Flash = pd.DataFrame()
 
-    # Iterate through every second row in raw_df
-    for i in range(0, len(raw_df), 2):
-        Fo_df = Fo_df._append(raw_df.iloc[i], ignore_index=True)
+    Time_Corrected_dp = raw_df.apply(pd.to_numeric, errors='coerce')
+    Time_Corrected_dp['Time'] = Time_Corrected_dp['Time'] - 0.001
+    #print(Time_Corrected_dp)
+
+    # Iterate through every second row in raw_df and add it to Fo_df
+    for i in range(0, 8, 2):
+        Fo_df = Fo_df._append(raw_df.iloc[i+1], ignore_index=True)
 
     # Display the resulting F0 dataframe
     print("F0 DataFrame:")
-    print(Fo_df)
-    for column in Fo_df:
-        Fo_df[column] = pd.to_numeric(Fo_df[column])
-    Fo_df['Time'] = Fo_df['Time'] - 0.001
-    print(Fo_df)
+    #print(Fo_df)
+
+    # Iterate through every second row from the 8th onwards in time_corrected and add it to Pre_Flash
+    for i in range(8, len(Time_Corrected_dp["Time"]), 2):
+        Pre_Flash = Pre_Flash._append(Time_Corrected_dp.iloc[i], ignore_index=True)
+
+    # Display the resulting Pre_Flash dataframe
+    #print("Pre_Flash DataFrame:")
+
+    # Iterate through every second row from the 9th row onwards in time_corrected and add it to Measuring_Flash_df
+    for i in range(9, len(Time_Corrected_dp["Time"]), 2):
+        Measuring_Flash_df = Measuring_Flash_df._append(Time_Corrected_dp.iloc[i], ignore_index=True)
+
+    # Display the resulting Pre_Flash dataframe
+    print("Measuring_Flash_df DataFrame:")
+
+
+    #populate
+
+
+
 
     if plot == 1:
         plot_data(Fo_df,txt_file)
+
